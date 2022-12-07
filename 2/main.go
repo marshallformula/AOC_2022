@@ -69,9 +69,43 @@ var shapeDecoder = ShapeDecoder{
 	"A": ROCK,
 	"B": PAPER,
 	"C": SCISSORS,
-	"X": ROCK,
-	"Y": PAPER,
-	"Z": SCISSORS,
+}
+
+type StrategyDecoder map[string]Result
+
+var strategyDecoder = StrategyDecoder{
+	"X": LOSE,
+	"Y": DRAW,
+	"Z": WIN,
+}
+
+func (strategy *Result) choseShape(opponentShape *Shape) Shape {
+	switch *strategy {
+	case WIN:
+		switch *opponentShape {
+		case ROCK:
+			return PAPER
+		case PAPER:
+			return SCISSORS
+		default:
+			return ROCK
+		}
+
+	case LOSE:
+		switch *opponentShape {
+		case ROCK:
+			return SCISSORS
+
+		case PAPER:
+			return ROCK
+
+		default:
+			return PAPER
+		}
+
+	default:
+		return *opponentShape
+	}
 }
 
 func roundProcessor(elfScore *int, myScore *int) func(string) {
@@ -79,11 +113,13 @@ func roundProcessor(elfScore *int, myScore *int) func(string) {
 		plays := strings.Fields(round)
 
 		elfShape, elfOk := shapeDecoder[plays[0]]
-		myShape, myOk := shapeDecoder[plays[1]]
+		myStrategy, myOk := strategyDecoder[plays[1]]
 
 		if !(elfOk && myOk) {
 			log.Fatalln("Couldn't decode the points for the round", plays)
 		}
+
+		myShape := myStrategy.choseShape(&elfShape)
 
 		switch elfShape.play(&myShape) {
 
