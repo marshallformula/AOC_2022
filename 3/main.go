@@ -66,6 +66,26 @@ func findTheDupe(sack1 *[]int32, sack2 *[]int32) (int32, error) {
 	return 0, errors.New("Could not find the duplicate item")
 }
 
+func findTheCommon(groupItems *[][]int32) (int32, error) {
+	if len(*groupItems) != 3 {
+		return 0, errors.New(fmt.Sprintf("Invalid group size: %d", len(*groupItems)))
+	}
+
+	sack0 := toSetIsh(&(*groupItems)[0])
+	sack1 := toSetIsh(&(*groupItems)[1])
+	sack2 := toSetIsh(&(*groupItems)[2])
+
+	for val := range sack0 {
+		_, ok1 := sack1[val]
+		_, ok2 := sack2[val]
+		if ok1 && ok2 {
+			return val, nil
+		}
+	}
+
+	return 0, errors.New("Could not find the common item")
+}
+
 func main() {
 	is, err := utils.InputScanner("input.txt")
 	defer is.Close()
@@ -78,27 +98,36 @@ func main() {
 
 	sum := 0
 
+	elfGroup := make([][]int32, 3, 3)
+	groupdIdx := 0
+
 	is.Scan(func(val string) {
 		letters := []rune(val)
-		length := len(letters)
 
-		sack1 := letters[:(length / 2)]
-		sack2 := letters[(length / 2):]
+		elfGroup[groupdIdx] = uniqueify(&letters)
 
-		duplicateItem, err := findTheDupe(&sack1, &sack2)
+		if groupdIdx < 2 {
 
-		if err != nil {
-			log.Fatalln(err)
+			groupdIdx++
+
+		} else {
+
+			commonItem, err := findTheCommon(&elfGroup)
+
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			priority, ok := priorityValues[commonItem]
+
+			if !ok {
+				log.Fatalf("Couldn't find priority for %c\n", commonItem)
+			}
+
+			sum += int(priority)
+			groupdIdx = 0
+			elfGroup = make([][]int32, 3, 3)
 		}
-
-		priority, ok := priorityValues[duplicateItem]
-
-		if !ok {
-			log.Fatalf("Couldn't find priority for %c\n", duplicateItem)
-		}
-
-		sum += int(priority)
-
 	})
 
 	fmt.Println("Sum of Priorities: ", sum)
