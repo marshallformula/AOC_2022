@@ -44,6 +44,11 @@ func checkContains(first *assignment, second *assignment) bool {
 	return false
 }
 
+func checkOverlap(first *assignment, second *assignment) bool {
+	return (first.lowerBound >= second.lowerBound && first.lowerBound <= second.upperBound) ||
+		(first.upperBound >= second.lowerBound && first.upperBound <= second.upperBound)
+}
+
 func main() {
 
 	is, err := utils.InputScanner("input.txt")
@@ -76,6 +81,8 @@ func main() {
 		}
 
 		if checkContains(first, second) || checkContains(second, first) {
+			overlapping++
+		} else if checkOverlap(first, second) {
 			overlapping++
 		}
 
