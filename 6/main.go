@@ -6,14 +6,14 @@ import (
 	"marshallformula.codes/utils"
 )
 
-func allUnique(chunk *string) bool {
+func allUnique(chunk *string, markerLength int) bool {
 	set := make(map[rune]struct{})
 
 	for _, v := range *chunk {
 		set[v] = struct{}{}
 	}
 
-	return len(set) == 4
+	return len(set) == markerLength
 }
 
 func main() {
@@ -32,10 +32,11 @@ func main() {
 		input = val
 	})
 
-	for i := 4; i <= len(input); i++ {
-		chunk := input[i-4 : i]
+	markerLength := 14
+	for i := markerLength; i <= len(input); i++ {
+		chunk := input[i-markerLength : i]
 
-		if allUnique(&chunk) {
+		if allUnique(&chunk, markerLength) {
 			fmt.Println("Found first unique chunk:", chunk)
 			fmt.Println(i)
 			return
