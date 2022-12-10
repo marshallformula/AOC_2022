@@ -73,19 +73,14 @@ func performInstruction(inst *instruction) {
 	fromStack := stacks[fromStackIdx]
 	toStack := stacks[toStackIdx]
 
-	// repeat as many times as instructed
-	for i := 0; i < inst.quantity; i++ {
+	// find the top (quantity) crates
+	removeIdx := len(fromStack) - inst.quantity
+	crateGroup := fromStack[removeIdx:]
 
-		// find the top crate
-		lastIdx := len(fromStack) - 1
-		crate := fromStack[lastIdx]
-
-		// add the crate on the new stack
-		toStack = append(toStack, crate)
-		// pop the create off the old stack
-		fromStack = fromStack[:lastIdx]
-
-	}
+	// add the crates on the new stack
+	toStack = append(toStack, crateGroup...)
+	// pop the crates off the old stack
+	fromStack = fromStack[:removeIdx]
 
 	// update the stacks in the data structure
 	stacks[fromStackIdx] = fromStack
@@ -156,4 +151,5 @@ func main() {
 	}
 
 	fmt.Println(topStacks)
+
 }
