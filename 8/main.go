@@ -32,77 +32,72 @@ func main() {
 		grid = append(grid, trees)
 	})
 
-	visibleTrees := make([]int, 0)
+	highScore := 0
 	columns := len(grid[0])
 	rows := len(grid)
 
+	// all edges will have at least 1 viewing distance of 0
+	// this should make the score of the tree always 0
 	for i := 1; i < rows-1; i++ {
 		for j := 1; j < columns-1; j++ {
 
 			currentTree := grid[i][j]
 
+			// the highest score this could get is 4
+			// making an assumption that at least 12 tree will have a higher score
 			if currentTree == 0 {
 				continue
 			}
 
-			visible := true
-
+			upCount := 0
 			for up := i - 1; up >= 0; up-- {
-				if grid[up][j] >= currentTree {
-					visible = false
+				if grid[up][j] < currentTree {
+					upCount++
+				} else {
+					upCount++
 					break
 				}
 			}
 
-			if visible {
-				visibleTrees = append(visibleTrees, currentTree)
-				continue
-			}
-			visible = true
-
+			rightCount := 0
 			for right := j + 1; right < columns; right++ {
-				if grid[i][right] >= currentTree {
-					visible = false
+				if grid[i][right] < currentTree {
+					rightCount++
+				} else {
+					rightCount++
 					break
 				}
 			}
 
-			if visible {
-				visibleTrees = append(visibleTrees, currentTree)
-				continue
-			}
-			visible = true
-
+			downCount := 0
 			for down := i + 1; down < len(grid); down++ {
-				if grid[down][j] >= currentTree {
-					visible = false
+				if grid[down][j] < currentTree {
+					downCount++
+				} else {
+					downCount++
 					break
 				}
 			}
 
-			if visible {
-				visibleTrees = append(visibleTrees, currentTree)
-				continue
-			}
-			visible = true
-
+			leftCount := 0
 			for left := j - 1; left >= 0; left-- {
-				if grid[i][left] >= currentTree {
-					visible = false
+				if grid[i][left] < currentTree {
+					leftCount++
+				} else {
+					leftCount++
 					break
 				}
 			}
 
-			if visible {
-				visibleTrees = append(visibleTrees, currentTree)
+			score := upCount * rightCount * downCount * leftCount
+
+			if score > highScore {
+				highScore = score
 			}
 
 		}
 	}
 
-	edgeTrees := ((rows) * 2) + (((columns) - 2) * 2)
-
-	// fmt.Println(visibleTrees)
-	fmt.Println(len(visibleTrees) + edgeTrees)
+	fmt.Println(highScore)
 
 }
