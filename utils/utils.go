@@ -18,17 +18,24 @@ func (is *inputScanner) Scan(fn func(string)) {
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
-    fn(scanner.Text())
+		fn(scanner.Text())
 	}
 
 }
 
 func InputScanner(inputFile string) (*inputScanner, error) {
 	input, err := os.Open(inputFile)
-	
+
 	if err != nil {
-	return nil, err
+		return nil, err
 	}
 
 	return &inputScanner{input}, nil
+}
+
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }

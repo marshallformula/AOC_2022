@@ -90,7 +90,7 @@ func main() {
 		}
 	}
 
-	sum := 0
+	/* sum := 0
 
 	for _, s := range []int{20, 60, 100, 140, 180, 220} {
 
@@ -98,6 +98,29 @@ func main() {
 
 	}
 
-	fmt.Println(sum)
+	fmt.Println(sum) */
+
+	registerX := 1
+	pixel := 0
+
+	for _, c := range cycles {
+
+		if utils.Abs(registerX-pixel) < 2 {
+			fmt.Print("#")
+		} else {
+			fmt.Print(".")
+		}
+
+		registerX += c
+
+		if (pixel+1)%40 == 0 {
+			fmt.Println()
+			pixel = 0
+			continue
+		}
+
+		pixel++
+
+	}
 
 }
